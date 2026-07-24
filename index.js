@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import urlRouter from "./routes/url.js";
+import { redirectToURL } from "./controllers/urlController.js";
 
 dotenv.config();
 
@@ -26,12 +27,15 @@ app.get("/", (req, res) => {
     success: true,
     message: "URL shortener API is running",
     createShortURL: "POST /url",
-    redirect: "GET /url/:shortId",
+    redirect: "GET /:shortId",
+    legacyRedirect: "GET /url/:shortId",
     watchList: "GET /url/:shortId/watch-list",
   });
 });
 
 app.use("/url", urlRouter);
+
+app.get("/:shortId", redirectToURL);
 
 // Connect MongoDB
 console.log("Connecting to MongoDB...");

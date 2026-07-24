@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import URL from "../models/url.js";
+import URLModel from "../models/url.js";
 
 const normalizeURL = (value) => {
   const trimmedURL = value.trim();
@@ -49,7 +49,7 @@ export const createShortURL = async (req, res) => {
 
     const shortId = nanoid(8);
 
-    const newURL = await URL.create({
+    const newURL = await URLModel.create({
       shortId,
       redirectURL: normalizedURL,
       visitHistory: [],
@@ -60,7 +60,7 @@ export const createShortURL = async (req, res) => {
       message: "Short URL created successfully",
       data: {
         shortId: newURL.shortId,
-        shortURL: `${getRequestBaseURL(req)}/url/${newURL.shortId}`,
+        shortURL: `${getRequestBaseURL(req)}/${newURL.shortId}`,
         originalURL: newURL.redirectURL,
       },
     });
@@ -78,7 +78,7 @@ export const redirectToURL = async (req, res) => {
   try {
     const { shortId } = req.params;
 
-    const entry = await URL.findOneAndUpdate(
+    const entry = await URLModel.findOneAndUpdate(
       { shortId },
       {
         $push: {
@@ -114,7 +114,7 @@ export const getURLWatchList = async (req, res) => {
   try {
     const { shortId } = req.params;
 
-    const entry = await URL.findOne({ shortId })
+    const entry = await URLModel.findOne({ shortId })
       .select("shortId redirectURL visitHistory")
       .lean();
 
