@@ -1,6 +1,32 @@
 import { nanoid } from "nanoid";
 import URL from "../models/url.js";
 
+const normalizeURL = (value) => {
+  const trimmedURL = value.trim();
+  const urlWithProtocol = /^https?:\/\//i.test(trimmedURL)
+    ? trimmedURL
+    : `https://${trimmedURL}`;
+
+  try {
+    const parsedURL = new URL(urlWithProtocol);
+
+    if (!["http:", "https:"].includes(parsedURL.protocol)) {
+      return null;
+    }
+
+    return parsedURL.toString();
+  } catch {
+    return null;
+  }
+};
+
+const getRequestBaseURL = (req) => {
+  const forwardedProtocol = req.get("x-forwarded-proto")?.split(",")[0];
+  const protocol = forwardedProtocol || req.protocol;
+
+  return `${protocol}://${req.get("host")}`;
+};
+
 export const createShortURL = async (req, res) => {
   try {
     const { url } = req.body;
@@ -12,11 +38,20 @@ export const createShortURL = async (req, res) => {
       });
     }
 
+    const normalizedURL = normalizeURL(url);
+
+    if (!normalizedURL) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid website URL",
+      });
+    }
+
     const shortId = nanoid(8);
 
     const newURL = await URL.create({
       shortId,
-      redirectURL: url,
+      redirectURL: normalizedURL,
       visitHistory: [],
     });
 
@@ -25,7 +60,7 @@ export const createShortURL = async (req, res) => {
       message: "Short URL created successfully",
       data: {
         shortId: newURL.shortId,
-        shortURL: `${req.protocol}://${req.get("host")}/url/${newURL.shortId}`,
+        shortURL: `${getRequestBaseURL(req)}/url/${newURL.shortId}`,
         originalURL: newURL.redirectURL,
       },
     });

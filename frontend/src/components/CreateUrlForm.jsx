@@ -36,7 +36,7 @@ export default function CreateUrlForm({
         <input
           value={createForm.url}
           onChange={(event) => setCreateUrl(event.target.value)}
-          placeholder="https://example.com/very/long/link"
+          placeholder="google.com, linkedin.com, or https://example.com/link"
           className="mt-2 h-12 w-full rounded-md border border-slate-300 bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
         />
       </label>

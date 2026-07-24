@@ -7,6 +7,7 @@ import urlRouter from "./routes/url.js";
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", true);
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
