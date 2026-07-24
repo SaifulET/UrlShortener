@@ -1,0 +1,1 @@
+Built a full-stack URL shortener with visit tracking, using Next.js, Express.js, MongoDB, Tailwind CSS, and Zustand. Implemented short-link creation, redirect handling, analytics history, and responsive UI.
