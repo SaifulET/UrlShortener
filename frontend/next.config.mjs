@@ -1,5 +1,8 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 
