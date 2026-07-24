@@ -74,3 +74,44 @@ export const redirectToURL = async (req, res) => {
     });
   }
 };
+
+export const getURLWatchList = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+
+    const entry = await URL.findOne({ shortId })
+      .select("shortId redirectURL visitHistory")
+      .lean();
+
+    if (!entry) {
+      return res.status(404).json({
+        success: false,
+        message: "Short URL not found",
+      });
+    }
+
+    const watchList = entry.visitHistory.map((visit) => ({
+      id: visit._id,
+      timestamp: visit.timestamp,
+      time: visit.timestamp ? new Date(visit.timestamp).toISOString() : null,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "URL watch list fetched successfully",
+      data: {
+        shortId: entry.shortId,
+        originalURL: entry.redirectURL,
+        totalWatchList: watchList.length,
+        watchList,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

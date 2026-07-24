@@ -26,6 +26,7 @@ app.get("/", (req, res) => {
     message: "URL shortener API is running",
     createShortURL: "POST /url",
     redirect: "GET /url/:shortId",
+    watchList: "GET /url/:shortId/watch-list",
   });
 });
 
