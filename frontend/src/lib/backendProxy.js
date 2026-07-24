@@ -1,17 +1,15 @@
 const LOCAL_BACKEND_URL = "http://localhost:3001";
+const PRODUCTION_BACKEND_URL = "https://url-shortener-nine-henna.vercel.app";
 const REQUEST_TIMEOUT_MS = 10000;
 
 export const getBackendBaseUrl = () => {
   const configuredUrl =
     process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
   const baseUrl =
-    configuredUrl || (process.env.NODE_ENV === "production" ? "" : LOCAL_BACKEND_URL);
-
-  if (!baseUrl) {
-    throw new Error(
-      "API_BASE_URL is missing. Set it to your deployed Express backend URL."
-    );
-  }
+    configuredUrl ||
+    (process.env.NODE_ENV === "production"
+      ? PRODUCTION_BACKEND_URL
+      : LOCAL_BACKEND_URL);
 
   if (
     process.env.NODE_ENV === "production" &&
